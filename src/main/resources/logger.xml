@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <bean id="consolEventLoger" class="ConsolEventLoger"/>
+
+    <bean id="event" class="Event" scope="prototype">
+        <constructor-arg>
+            <bean id="date" class="java.util.Date"/>
+        </constructor-arg>
+        <constructor-arg>
+            <bean id="df" class="java.text.DateFormat"
+                  factory-method="getDateTimeInstance"/>
+        </constructor-arg>
+        <property name="msg" value="User has generated event "/>
+        <property name="enevtType" value="INFO"/>
+    </bean>
+
+    <bean id="fileEventLoger" class="FileEventLoger" init-method="init">
+        <constructor-arg value="fileEventLoger.log"/>
+    </bean>
+
+    <bean id="cachEventLoger" class="CachFileEventLogger"
+                destroy-method="destroy" parent="fileEventLoger">
+                <constructor-arg value="1"/>
+    </bean>
+
+    <bean id="combinedEventLoger" class="CombinedEventLoger">
+        <constructor-arg>
+            <list>
+                <ref bean="consolEventLoger"/>
+                <ref bean="fileEventLoger"/>
+            </list>
+        </constructor-arg>
+    </bean>
+        
+</beans>
+
